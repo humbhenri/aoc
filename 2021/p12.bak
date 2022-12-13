@@ -1,0 +1,6 @@
+#lang racket
+(define graph '((start . (A b))
+                (A . (c b end))
+                (c . (A))
+                (b . (A d end))
+                (d . (b))))

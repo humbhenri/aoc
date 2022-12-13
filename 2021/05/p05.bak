@@ -1,0 +1,6 @@
+#lang racket
+;;(open-input-string "C:/Users/humbe/Projects/aoc/2021/05/input.txt")
+(define (parse line)
+  (let ((matches (regexp-match* #rx"([0-9]),([0-9]) -> ([0-9]),([0-9])" line #:match-select cdr)))
+    (map string->number (car matches))))
+
