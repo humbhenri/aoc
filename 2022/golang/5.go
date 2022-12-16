@@ -42,10 +42,11 @@ func parse_file(content string) (string, string) {
 
 func parse_stack_line(line string) []string {
 	res := []string{}
+	crate_len := 3
 	for i := 0; i < len(line); {
-		crate := line[i : i+3]
+		crate := line[i : i+crate_len]
 		res = append(res, crate)
-		i = i + 4
+		i = i + crate_len + 1
 	}
 	return res
 }
@@ -93,13 +94,13 @@ func parse_stack(text string) stacks {
 	}
 	matrix := transpose(s[:len(s)-1])
 	res := []stack{}
+	brackets := regexp.MustCompile("\\[|\\]")
 	for i, row := range matrix {
 		res = append(res, []string{})
 		reverse(row)
 		for _, crate := range row {
 			if string(crate[0]) == "[" {
-				re := regexp.MustCompile("\\[|\\]")
-				res[i] = append(res[i], re.ReplaceAllString(crate, ""))
+				res[i] = append(res[i], brackets.ReplaceAllString(crate, ""))
 			}
 		}
 	}
