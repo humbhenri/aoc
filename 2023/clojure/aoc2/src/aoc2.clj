@@ -59,10 +59,11 @@
 (def schema {"red" 12 "green" 13 "blue" 14})
 
 ;; part1
-(->> input
-    str/split-lines
-    (map parse-line)
-    (filter #(possible? % schema))
-    (map #(get % :game))
-    (map #(Integer/parseInt %))
-    (reduce +))
+(defn part1 []
+  (->> input
+       str/split-lines
+       (map parse-line)
+       (filter #(possible? % schema))
+       (map #(get % :game))
+       (map #(Integer/parseInt %))
+       (reduce +)))

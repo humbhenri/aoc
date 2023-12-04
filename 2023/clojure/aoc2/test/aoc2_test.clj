@@ -3,4 +3,4 @@
             [clojure.test :as t]))
 
 
-(t/is (= 2 (+ 1 1)))
+(t/is (= 2061 (sut/part1)))
