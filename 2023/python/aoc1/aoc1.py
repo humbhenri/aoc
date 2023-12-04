@@ -1,7 +1,11 @@
 import re
+from pathlib import Path
+
+INPUT = Path.cwd() / '2023' / '01.input'
 
 def part1():
-    with open("../../01.input") as f:
+    print(Path.cwd())
+    with open(INPUT) as f:
         total = 0
         for line in f.readlines():
             first = None
@@ -23,7 +27,7 @@ def translate(digits):
 def part2():
     # overlapping regex matches with look ahead
     digits = re.compile(r"(?=(\d|one|two|three|four|five|six|seven|eight|nine))")
-    with open("../../01.input") as f:
+    with open(INPUT) as f:
         total = 0
         for line in f.readlines():
             matches = re.finditer(digits, line)
