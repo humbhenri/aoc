@@ -16,7 +16,8 @@ function convert(source: number, converters: Array<converter>): number {
     return source;
   }
   const diff = mapping[0].dest_range_start - mapping[0].source_range_start;
-  return source + diff;
+  const value = source + diff;
+  return value;
 }
 
 type mapping = { source: string; dest: string; converters: Array<converter> };

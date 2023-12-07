@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class Aoc5 {
 
-    record Range(int src, int dest, int len) {
+    record Range(long dest, long src, long len) {
     }
 
     record Mapping(String src, String dest, List<Range> ranges) {
@@ -25,28 +24,29 @@ public class Aoc5 {
             var ranges = Stream.of(parts[1].trim().split("\n"))
                     .map(line -> {
                         var numbers = line.split(" ");
-                        return new Range(Integer.parseInt(numbers[0]),
-                                Integer.parseInt(numbers[1]),
-                                Integer.parseInt(numbers[2]));
+                        return new Range(Long.parseLong(numbers[0]),
+                                Long.parseLong(numbers[1]),
+                                Long.parseLong(numbers[2]));
                     }).toList();
             return new Mapping(src, dest, ranges);
         }
 
-        int convert(int number) {
-            return ranges.stream().filter(r -> number >= r.src && number <= r.src + r.len)
+        long convert(long number) {
+            var value = ranges.stream().filter(r -> number >= r.src && number <= r.src + r.len)
                     .map(r -> number + (r.dest - r.src))
                     .findFirst()
                     .orElse(number);
+            return value;
         }
     }
 
-    record Almanac(List<Integer> seeds, List<Mapping> mappings) {
+    record Almanac(List<Long> seeds, List<Mapping> mappings) {
         static Almanac parse(String fileName) throws IOException {
             var text = Files.readString(Path.of(fileName));
             var sections = text.split("\n\n");
-            var seeds = new ArrayList<Integer>();
+            var seeds = new ArrayList<Long>();
             for (String seed : sections[0].split(":")[1].trim().split(" ")) {
-                seeds.add(Integer.parseInt(seed.trim()));
+                seeds.add(Long.parseLong(seed.trim()));
             }
             var mappings = Stream.of(sections).skip(1).map(section -> Mapping.parse(section))
                     .toList();
@@ -71,20 +71,20 @@ public class Aoc5 {
             "location");
 
     static void part1(Almanac almanac) {
-        var lowest = 1e9;
-        for (int seed : almanac.seeds) {
+        long lowest = 9999999999l;
+        for (long seed : almanac.seeds) {
             var location = seed;
             for (int i = 0; i < categories.size() - 1; i++) {
                 var mapping = almanac.getMapping(categories.get(i), categories.get(i + 1));
                 location = mapping.convert(location);
             }
-            lowest = Math.min(lowest, location);
+            lowest = (long) Math.min(lowest, location);
         }
-        System.out.println(lowest);
+        System.out.printf("%d\n", lowest);
     }
 
     public static void main(String... args) throws IOException {
-        var almanac = Almanac.parse("/home/humberto/projects/aoc/2023/05.example");
+        var almanac = Almanac.parse("/home/humberto/projects/aoc/2023/05.input");
         part1(almanac);
     }
 
