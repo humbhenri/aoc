@@ -7,7 +7,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BinaryOperator;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Aoc5 {
@@ -40,7 +44,17 @@ public class Aoc5 {
         }
     }
 
-    record Almanac(List<Long> seeds, List<Mapping> mappings) {
+    static class Almanac {
+
+        Map<String, Map<String, Mapping>> getMappingCache = new HashMap<>();
+        List<Long> seeds;
+        List<Mapping> mappings;
+
+        Almanac(List<Long> seeds, List<Mapping> mappings) {
+            this.seeds = seeds;
+            this.mappings = mappings;
+        }
+
         static Almanac parse(String fileName) throws IOException {
             var text = Files.readString(Path.of(fileName));
             var sections = text.split("\n\n");
@@ -54,9 +68,15 @@ public class Aoc5 {
         }
 
         Mapping getMapping(String src, String dest) {
-            return mappings.stream().filter(mapping -> mapping.src.equals(src) && mapping.dest.equals(dest))
+            var srcMap = getMappingCache.get(src);
+            if (srcMap != null) {
+                return srcMap.get(dest);
+            }
+            var newMapping = mappings.stream().filter(mapping -> mapping.src.equals(src) && mapping.dest.equals(dest))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Mapping not found: " + src + " " + "dst"));
+            getMappingCache.put(src, Map.of(dest, newMapping));
+            return newMapping;
         }
     }
 
@@ -83,9 +103,35 @@ public class Aoc5 {
         System.out.printf("%d\n", lowest);
     }
 
+    record startLen(long start, long len) {
+    }
+
+    static void part2(Almanac almanac) {
+        var seeds = new ArrayList<startLen>();
+        for (int j = 0; j < almanac.seeds.size(); j += 2) {
+            seeds.add(new startLen(almanac.seeds.get(j), almanac.seeds.get(j + 1)));
+        }
+        var lowestAll = seeds.stream().parallel().map(startLen -> {
+            var start = startLen.start;
+            var len = startLen.len;
+            var lowest = 999999999999l;
+            for (long seed = start; seed < start + len; seed++) {
+                var location = seed;
+                for (int i = 0; i < categories.size() - 1; i++) {
+                    var mapping = almanac.getMapping(categories.get(i), categories.get(i + 1));
+                    location = mapping.convert(location);
+                }
+                lowest = Math.min(lowest, location);
+            }
+            return lowest;
+        }).mapToLong(n -> n).min().orElse(0);
+        System.out.println(lowestAll);
+    }
+
     public static void main(String... args) throws IOException {
         var almanac = Almanac.parse("/home/humberto/projects/aoc/2023/05.input");
-        part1(almanac);
+        // part1(almanac);
+        part2(almanac);
     }
 
 }
