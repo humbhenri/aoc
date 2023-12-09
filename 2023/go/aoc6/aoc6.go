@@ -22,7 +22,7 @@ func countWins(time int, maxDist int) int {
 func toInt(s string) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("%s not a number", s))
 	}
 	return i
 }
@@ -36,18 +36,33 @@ func readInput() string {
 	return content
 }
 
-func main() {
+func part1() {
 	content := readInput()
 	lines := strings.Split(content, "\n")
 	numbersRe := regexp.MustCompile(`(\d+)`)
 	times := numbersRe.FindAllString(lines[0], -1)
 	maxDistances := numbersRe.FindAllString(lines[1], -1)
-	fmt.Println(times)
-	fmt.Println(maxDistances)
 	p := 1
 	for i, t := range times {
 		wins := countWins(toInt(t), toInt(maxDistances[i]))
 		p *= wins
 	}
 	fmt.Println(p)
+}
+
+func part2() {
+	content := readInput()
+	lines := strings.Split(content, "\n")
+	numbersRe := regexp.MustCompile(`(\d+)`)
+	times := numbersRe.FindAllString(lines[0], -1)
+	time := strings.Join(times, "")
+	maxDistances := numbersRe.FindAllString(lines[1], -1)
+	maxDistance := strings.Join(maxDistances, "")
+	wins := countWins(toInt(time), toInt(maxDistance))
+	fmt.Println(wins)
+}
+
+func main() {
+	part1()
+	part2()
 }
