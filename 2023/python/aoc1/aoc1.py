@@ -1,28 +1,39 @@
 import re
 from pathlib import Path
 
-INPUT = Path.cwd() / '2023' / '01.input'
+INPUT = Path.cwd() / "2023" / "01.input"
+
 
 def part1():
     print(Path.cwd())
     with open(INPUT) as f:
         total = 0
         for line in f.readlines():
-            first = None
-            last = None
+            first = ""
+            last = ""
             for c in line:
                 if c.isdigit():
                     last = c
                     if not first:
                         first = c
-            total += int(first+last)
+            total += int(first + last)
         return total
+
 
 def translate(digits):
     letters_to_number = {
-       "one" : "1", "two" : "2", "three" : "3", "four": "4", "five": "5", "six": "6", "seven" : "7", "eight": "8", "nine" : "9"
+        "one": "1",
+        "two": "2",
+        "three": "3",
+        "four": "4",
+        "five": "5",
+        "six": "6",
+        "seven": "7",
+        "eight": "8",
+        "nine": "9",
     }
     return map(lambda n: n if n.isdigit() else letters_to_number[n], digits)
+
 
 def part2():
     # overlapping regex matches with look ahead
@@ -36,6 +47,5 @@ def part2():
                 last = first
             else:
                 last = rest[-1]
-            total += int(first+last)
+            total += int(first + last)
         return total
-        
