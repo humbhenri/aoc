@@ -34,16 +34,8 @@ fn parse_input(file_name: String) -> (String, Network) {
     (instructions, network)
 }
 
-fn test() {
-    let mut network: Network = HashMap::new();
-    network.insert("AAA".to_owned(), ("BBB".to_owned(), "CCC".to_owned()));
-    network.insert("BBB".to_owned(), ("DDD".to_owned(), "EEE".to_owned()));
-    network.insert("CCC".to_owned(), ("ZZZ".to_owned(), "GGG".to_owned()));
-    network.insert("DDD".to_owned(), ("DDD".to_owned(), "DDD".to_owned()));
-    network.insert("EEE".to_owned(), ("EEE".to_owned(), "EEE".to_owned()));
-    network.insert("GGG".to_owned(), ("GGG".to_owned(), "GGG".to_owned()));
-    network.insert("ZZZ".to_owned(), ("ZZZ".to_owned(), "ZZZ".to_owned()));
-    let mut instructions = ['R', 'R'].iter().cycle();
+fn count_steps(network: Network, instructions_line: String) -> u32 {
+    let mut instructions = instructions_line.chars().cycle();
     let mut current = "AAA";
     let mut steps = 0;
     while current != "ZZZ" {
@@ -55,11 +47,15 @@ fn test() {
         };
         current = next.expect("invalid");
     }
-    println!("steps = {}", steps);
+    steps
+}
+
+fn part1() {
+    let (instructions, network) =
+        parse_input("/home/humberto/projects/aoc/2023/08.input".to_owned());
+    println!("steps = {}", count_steps(network, instructions));
 }
 
 fn main() {
-    let (instructions, network) =
-        parse_input("/home/humberto/projects/aoc/2023/08.example".to_owned());
-    println!("input = {:?}", network);
+    part1()
 }

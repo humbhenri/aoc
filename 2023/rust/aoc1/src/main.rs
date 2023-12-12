@@ -11,12 +11,13 @@ fn main() {
 fn part1(file_name: &str) -> io::Result<u32> {
     let file = File::open(file_name)?;
     let reader = io::BufReader::new(file);
-    let mut total = 0;
-    for line in reader.lines() {
-        let (first_digit, last_digit) = get_first_and_last_digit(line?);
-        total += first_digit * 10 + last_digit;
-    }
-    Ok(total)
+    Ok(reader
+        .lines()
+        .map(|line| {
+            let (first_digit, last_digit) = get_first_and_last_digit(line.unwrap());
+            first_digit * 10 + last_digit
+        })
+        .sum::<u32>())
 }
 
 fn get_first_and_last_digit(line: String) -> (u32, u32) {
@@ -25,9 +26,51 @@ fn get_first_and_last_digit(line: String) -> (u32, u32) {
     (first, digits.last().unwrap_or(first))
 }
 
+fn get_first_and_last_digit_part2(line: String) -> (u32, u32) {
+    let patterns = "one two three four five six seven eight nine 1 2 3 4 5 6 7 8 9".split(' ');
+    let mut first_digit = 0;
+    let mut last_digit = 0;
+    let mut first_digit_found = false;
+    let mut last_digit_found = false;
+    for p in patterns {
+        if !first_digit_found && line.find(p).is_some() {
+            first_digit = translate(p).unwrap();
+            first_digit_found = true;
+        }
+        if !last_digit_found && line.rfind(p).is_some() {
+            last_digit = translate(p).unwrap();
+            last_digit_found = true;
+        }
+    }
+    (first_digit, last_digit)
+}
+
+fn translate(p: &str) -> Option<u32> {
+    match p {
+        "one" => Some(1),
+        "two" => Some(2),
+        "three" => Some(3),
+        "four" => Some(4),
+        "five" => Some(5),
+        "six" => Some(6),
+        "seven" => Some(7),
+        "eight" => Some(8),
+        "nine" => Some(9),
+        d => d.chars().find_map(|c| c.to_digit(10)),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn get_first_and_last_digit_part2_test() {
+        assert_eq!(
+            (2, 9),
+            get_first_and_last_digit_part2("two1nine".to_owned())
+        );
+    }
 
     #[test]
     fn get_first_and_last_digit_test() {
