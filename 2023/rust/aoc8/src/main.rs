@@ -57,5 +57,34 @@ fn part1() {
 }
 
 fn main() {
-    part1()
+    // part1()
+
+    let (instructions, network) =
+        parse_input("/home/humberto/projects/aoc/2023/08.input".to_owned());
+
+    let mut instructions_iter = instructions.chars().cycle();
+    let mut current: Vec<&String> = network.keys().filter(|node| node.ends_with('A')).collect();
+    let mut steps = 0;
+    while !current.iter().all(|node| node.ends_with('Z')) {
+        steps += 1;
+        let next = match instructions_iter.next().unwrap() {
+            'R' => {
+                let mut next_nodes = vec![];
+                for node in current {
+                    next_nodes.push(&network.get(node).unwrap().1);
+                }
+                next_nodes
+            }
+            'L' => {
+                let mut next_nodes = vec![];
+                for node in current {
+                    next_nodes.push(&network.get(node).unwrap().0);
+                }
+                next_nodes
+            }
+            _ => unreachable!(),
+        };
+        current = next;
+    }
+    println!("{}", steps);
 }
