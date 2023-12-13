@@ -1,5 +1,6 @@
 // https://adventofcode.com/2023/day/8
 
+use num::integer::lcm;
 use regex::Regex;
 use std::{
     collections::HashMap,
@@ -34,11 +35,16 @@ fn parse_input(file_name: String) -> (String, Network) {
     (instructions, network)
 }
 
-fn count_steps(network: Network, instructions_line: String) -> u32 {
+fn count_steps(
+    network: &Network,
+    instructions_line: &str,
+    current_node: &str,
+    node_is_final: impl Fn(String) -> bool,
+) -> u64 {
     let mut instructions = instructions_line.chars().cycle();
-    let mut current = "AAA";
     let mut steps = 0;
-    while current != "ZZZ" {
+    let mut current = current_node;
+    while !node_is_final(current.to_owned()) {
         steps += 1;
         let next = match instructions.next().unwrap() {
             'R' => network.get(current).map(|lr| &lr.1),
@@ -53,38 +59,36 @@ fn count_steps(network: Network, instructions_line: String) -> u32 {
 fn part1() {
     let (instructions, network) =
         parse_input("/home/humberto/projects/aoc/2023/08.input".to_owned());
-    println!("steps = {}", count_steps(network, instructions));
+    println!(
+        "steps = {}",
+        count_steps(&network, &instructions, "AAA", |node| node == "ZZZ")
+    );
+}
+
+fn lcm_many(numbers: &[u64]) -> u64 {
+    if numbers.is_empty() {
+        return 0;
+    }
+    let mut result = numbers[0];
+    for &num in &numbers[1..] {
+        result = lcm(result, num);
+    }
+    result
+}
+
+fn part2() {
+    let (instructions, network) =
+        parse_input("/home/humberto/projects/aoc/2023/08.input".to_owned());
+    let node_is_final = |node: String| node.ends_with('Z');
+    let steps: Vec<u64> = network
+        .keys()
+        .filter(|node| node.ends_with('A'))
+        .map(|node| count_steps(&network, &instructions, node, node_is_final))
+        .collect();
+    println!("steps = {}", lcm_many(&steps));
 }
 
 fn main() {
-    // part1()
-
-    let (instructions, network) =
-        parse_input("/home/humberto/projects/aoc/2023/08.input".to_owned());
-
-    let mut instructions_iter = instructions.chars().cycle();
-    let mut current: Vec<&String> = network.keys().filter(|node| node.ends_with('A')).collect();
-    let mut steps = 0;
-    while !current.iter().all(|node| node.ends_with('Z')) {
-        steps += 1;
-        let next = match instructions_iter.next().unwrap() {
-            'R' => {
-                let mut next_nodes = vec![];
-                for node in current {
-                    next_nodes.push(&network.get(node).unwrap().1);
-                }
-                next_nodes
-            }
-            'L' => {
-                let mut next_nodes = vec![];
-                for node in current {
-                    next_nodes.push(&network.get(node).unwrap().0);
-                }
-                next_nodes
-            }
-            _ => unreachable!(),
-        };
-        current = next;
-    }
-    println!("{}", steps);
+    part1();
+    part2();
 }
