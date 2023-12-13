@@ -29,16 +29,17 @@ fn get_char_at_pos(text: &str, pos: &(usize, usize), row_len: usize) -> char {
     text.chars().nth(pos.1 + row_len * pos.0).unwrap()
 }
 
-fn get_number(number: &[(usize, usize)], input_no_newlines: &str, row_len: usize) -> usize {
-    let value = number
+// from the digit positions returns the number from the string
+fn get_number(digits_positions: &[(usize, usize)], text: &str, line_len: usize) -> usize {
+    let value = digits_positions
         .iter()
-        .map(|pos| get_char_at_pos(input_no_newlines, pos, row_len))
+        .map(|pos| get_char_at_pos(text, pos, line_len))
         .collect::<String>();
     value
         .parse::<usize>()
         .expect(&("not a number ".to_owned() + &value))
 }
-fn main() {
+fn part1() {
     let input_string = fs::read_to_string("/home/humberto/projects/aoc/2023/03.input").unwrap();
     let mut consecutive_digit_positions: Vec<Vec<(usize, usize)>> = Vec::new();
     let mut current_consecutive_positions: Vec<(usize, usize)> = Vec::new();
@@ -74,4 +75,8 @@ fn main() {
         .map(|number| get_number(number, &input_no_newlines, row_len))
         .sum();
     println!("sum = {}", sum);
+}
+
+fn main() {
+    part1();
 }
