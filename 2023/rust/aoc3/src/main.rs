@@ -39,7 +39,18 @@ fn get_number(digits_positions: &[(usize, usize)], text: &str, line_len: usize) 
         .parse::<usize>()
         .expect(&("not a number ".to_owned() + &value))
 }
-fn part1() {
+
+fn part1_() -> usize {
+    let mut result = 0;
+    let input: Vec<&str> = fs::read_to_string("/home/humberto/projects/aoc/2023/03.input").unwrap()
+        .split("\n").collect();
+    for i in 0..input.len() {
+        let numbers = input[i].replace(".", " ");
+    }
+    result
+}
+
+fn part1() -> usize {
     let input_string = fs::read_to_string("/home/humberto/projects/aoc/2023/03.input").unwrap();
     let mut consecutive_digit_positions: Vec<Vec<(usize, usize)>> = Vec::new();
     let mut current_consecutive_positions: Vec<(usize, usize)> = Vec::new();
@@ -74,9 +85,19 @@ fn part1() {
         .filter(|number| is_part_number(number, &symbol_positions))
         .map(|number| get_number(number, &input_no_newlines, row_len))
         .sum();
-    println!("sum = {}", sum);
+    sum
 }
 
 fn main() {
-    part1();
+    println!("{}", part1());
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn part1_test() {
+        assert_eq!(556367, part1());
+    }
 }
