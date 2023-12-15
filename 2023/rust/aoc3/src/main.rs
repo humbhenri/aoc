@@ -15,50 +15,64 @@ fn part1_() -> usize {
                 .parse::<usize>()
                 .unwrap();
             for j in m.start()..m.end() {
-                // Construct the surrounding array
-                let surrounding = vec![
-                    lines
-                        .get(i.wrapping_sub(1))
-                        .and_then(|row| row.chars().nth(j.wrapping_sub(1)))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i.wrapping_sub(1))
-                        .and_then(|row| row.chars().nth(j))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i.wrapping_sub(1))
-                        .and_then(|row| row.chars().nth(j + 1))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i)
-                        .and_then(|row| row.chars().nth(j.wrapping_sub(1)))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i)
-                        .and_then(|row| row.chars().nth(j))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i)
-                        .and_then(|row| row.chars().nth(j + 1))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i + 1)
-                        .and_then(|row| row.chars().nth(j.wrapping_sub(1)))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i + 1)
-                        .and_then(|row| row.chars().nth(j))
-                        .unwrap_or('.'),
-                    lines
-                        .get(i + 1)
-                        .and_then(|row| row.chars().nth(j + 1))
-                        .unwrap_or('.'),
-                ];
-                // test if the surrounding has a symbol
-                if surrounding.iter().any(|c| !c.is_ascii_digit() && *c != '.') {
-                    result += number_value;
-                    break;
+                'outer: for x in -1isize..=1 {
+                    for y in -1isize..=1 {
+                        let row_num = if x < 0 { i.wrapping_sub(-x) } else { i + x };
+                        let col_num = if y < 0 { j.wrapping_sub(-y) } else { j + y };
+                        let c = lines
+                            .get(row_num)
+                            .and_then(|row| row.chars().nth(col_num))
+                            .unwrap();
+                        if !c.is_ascii_digit() && c != '.' {
+                            result += number_value;
+                            break 'outer;
+                        }
+                    }
                 }
+                // Construct the surrounding array
+                // let surrounding = vec![
+                //     lines
+                //         .get(i.wrapping_sub(1))
+                //         .and_then(|row| row.chars().nth(j.wrapping_sub(1)))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i.wrapping_sub(1))
+                //         .and_then(|row| row.chars().nth(j))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i.wrapping_sub(1))
+                //         .and_then(|row| row.chars().nth(j + 1))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i)
+                //         .and_then(|row| row.chars().nth(j.wrapping_sub(1)))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i)
+                //         .and_then(|row| row.chars().nth(j))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i)
+                //         .and_then(|row| row.chars().nth(j + 1))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i + 1)
+                //         .and_then(|row| row.chars().nth(j.wrapping_sub(1)))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i + 1)
+                //         .and_then(|row| row.chars().nth(j))
+                //         .unwrap_or('.'),
+                //     lines
+                //         .get(i + 1)
+                //         .and_then(|row| row.chars().nth(j + 1))
+                //         .unwrap_or('.'),
+                // ];
+                // // test if the surrounding has a symbol
+                // if surrounding.iter().any(|c| !c.is_ascii_digit() && *c != '.') {
+                //     result += number_value;
+                //     break;
+                // }
             }
         });
     });
