@@ -85,10 +85,33 @@ fn part1(file: &str) -> u32 {
         .sum()
 }
 
+fn part2(file: &str) -> u32 {
+    fs::read_to_string(file)
+        .unwrap()
+        .lines()
+        .map(parse_game)
+        .map(|game| {
+            let mut max_green = 0;
+            let mut max_blue = 0;
+            let mut max_red = 0;
+            game.subsets.iter().for_each(|subset| {
+                max_green = max_green.max(subset.greens);
+                max_blue = max_blue.max(subset.blues);
+                max_red = max_red.max(subset.reds);
+            });
+            max_green * max_blue * max_red
+        })
+        .sum()
+}
+
 fn main() {
     println!(
         "part 1 = {}",
         part1("/home/humberto/projects/aoc/2023/02.input")
+    );
+    println!(
+        "part 2 = {}",
+        part2("/home/humberto/projects/aoc/2023/02.input")
     );
 }
 
