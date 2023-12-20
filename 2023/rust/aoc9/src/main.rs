@@ -18,6 +18,13 @@ fn sequence_below(seq: &[i32]) -> Vec<i32> {
         .collect::<Vec<i32>>()
 }
 
+fn first_value(seq: &[i32]) -> i32 {
+    if seq.iter().all(|&x| x == 0) {
+        return 0;
+    }
+    seq.first().unwrap() - first_value(&sequence_below(seq))
+}
+
 fn parse_input(path: &str) -> Vec<Vec<i32>> {
     fs::read_to_string(path)
         .unwrap()
@@ -31,9 +38,13 @@ fn parse_input(path: &str) -> Vec<Vec<i32>> {
 }
 
 fn main() {
-    let input = "/home/humberto/projects/aoc/2023/09.input";
-    let part1: i32 = parse_input(input).iter().map(|seq| next_value(seq)).sum();
+    let input_path = "/home/humberto/projects/aoc/2023/09.input";
+    let input = &parse_input(input_path);
+    let part1: i32 = input.iter().map(|seq| next_value(seq)).sum();
     println!("Part 1 = {}", part1);
+
+    let part2: i32 = input.iter().map(|seq| first_value(seq)).sum();
+    println!("Part 2 = {}", part2);
 }
 
 #[cfg(test)]
@@ -53,5 +64,13 @@ mod tests {
         assert_eq!(0, next_value(&[0, 0, 0]));
         assert_eq!(28, next_value(&[1, 3, 6, 10, 15, 21]));
         assert_eq!(68, next_value(&[10, 13, 16, 21, 30, 45]));
+    }
+
+    #[test]
+    fn test_first_value() {
+        assert_eq!(0, first_value(&[0, 0]));
+        assert_eq!(2, first_value(&[2, 2, 2]));
+        assert_eq!(-2, first_value(&[0, 2, 4, 6]));
+        assert_eq!(5, first_value(&[10, 13, 16, 21, 30, 45]));
     }
 }
