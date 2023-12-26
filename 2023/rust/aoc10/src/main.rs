@@ -106,18 +106,8 @@ fn get_possible_directions(pos: &Position, diagram: &Diagram) -> Vec<Position> {
 }
 
 fn visit_pipes(step: usize, current_pos: &Position, diagram: &Diagram, visited: &mut VisitMap) {
-    // println!(
-    //     "step = {}, current_pos = {:?}, visited = {:?}",
-    //     step,
-    //     get_pipe(current_pos, diagram),
-    //     visited
-    // );
     let num_steps = visited.entry((current_pos.0, current_pos.1)).or_default();
-    if *num_steps > 0 && step > *num_steps {
-        // println!(
-        //     "already visited, step = {}, num_steps = {}",
-        //     step, num_steps
-        // );
+    if *num_steps > 0 {
         // already visited
         return;
     }
@@ -128,11 +118,6 @@ fn visit_pipes(step: usize, current_pos: &Position, diagram: &Diagram, visited: 
 }
 
 fn main() {
-    //     let example = r#"..F7.
-    // .FJ|.
-    // SJ.L7
-    // |F--J
-    // LJ..."#;
     let input = fs::read_to_string("/home/humberto/projects/aoc/2023/10.input").unwrap();
     let diagram = parse_diagram(&input);
     let start = find_starting_point(&diagram).unwrap();
@@ -151,7 +136,7 @@ fn main() {
         "farthest point is {:?} ({}) with distance {}",
         farthest,
         get_pipe(farthest, &diagram),
-        max - 1
+        max / 2
     );
 }
 
