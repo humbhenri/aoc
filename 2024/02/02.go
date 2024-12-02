@@ -9,6 +9,21 @@ import (
 	"strings"
 )
 
+func assert(condition bool, message string) {
+	if !condition {
+		panic(message)
+	}
+}
+
+func delete(slice []int, index int) []int {
+	if (index < 0) || (index >= len(slice)) {
+		return slice
+	}
+	s := slices.Clone(slice)
+	s = slices.Delete(s, index, index+1)
+	return s
+}
+
 func isSafe(numbers []int, problemDampener bool) bool {
 	increasing := numbers[1]-numbers[0] > 0
 	permittedDiffs := []int{1, 2, 3}
@@ -19,21 +34,7 @@ func isSafe(numbers []int, problemDampener bool) bool {
 		diff := numbers[i+1] - numbers[i]
 		if violates(diff) {
 			if problemDampener {
-				previousSafe := false
-				if i > 0 {
-					removePrevious := slices.Clone(numbers)
-					removePrevious = slices.Delete(removePrevious, i-1, i)
-					previousSafe = isSafe(removePrevious, false)
-				}
-				nextSafe := false
-				if i+1 < len(numbers) {
-					removeNext := slices.Clone(numbers)
-					removeNext = slices.Delete(removeNext, i+1, i+2)
-					nextSafe = isSafe(removeNext, false)
-				}
-				removeCurrent := slices.Clone(numbers)
-				removeCurrent = slices.Delete(removeCurrent, i, i+1)
-				return previousSafe || isSafe(removeCurrent, false) || nextSafe
+				return isSafe(delete(numbers, i), false) || isSafe(delete(numbers, i+1), false) || isSafe(delete(numbers, i-1), false)
 			}
 			return false
 		}
@@ -79,6 +80,10 @@ func part2(inputFile string) int {
 
 func main() {
 	inputFile := "2024/02/02.input"
-	fmt.Printf("Part 1: %d\n", part1(inputFile))
-	fmt.Printf("Part 2: %d\n", part2(inputFile))
+	part1 := part1(inputFile)
+	fmt.Printf("Part 1: %d\n", part1)
+	part2 := part2(inputFile)
+	fmt.Printf("Part 2: %d\n", part2)
+	assert(part1 == 486, "Part 1 failed")
+	assert(part2 == 540, "Part 2 failed")
 }
