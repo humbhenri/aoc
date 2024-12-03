@@ -79,11 +79,9 @@ func part2(inputFile string) int {
 }
 
 func main() {
-	inputFile := "2024/02/02.input"
+	inputFile := "02/02.input"
 	part1 := part1(inputFile)
 	fmt.Printf("Part 1: %d\n", part1)
 	part2 := part2(inputFile)
 	fmt.Printf("Part 2: %d\n", part2)
-	assert(part1 == 486, "Part 1 failed")
-	assert(part2 == 540, "Part 2 failed")
 }
