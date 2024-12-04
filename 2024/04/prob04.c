@@ -20,7 +20,6 @@ char *read_input(char *file_name, int *rows, int *cols) {
     }
   }
   rewind(f);
-  printf("rows = %d, cols = %d\n", *rows, *cols);
 
   char *input = malloc(*rows * *cols);
   int i = 0;
@@ -48,7 +47,7 @@ int find_xmas(char *input, int rows, int cols, int i, int j, int dx, int dy) {
          input[(i + 3 * dx) * cols + (j + 3 * dy)] == 'S';
 }
 
-void part1(char* input, int rows, int cols) {
+void part1(char *input, int rows, int cols) {
   int count = 0;
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
@@ -65,7 +64,7 @@ void part1(char* input, int rows, int cols) {
   printf("part 1, count = %d\n", count);
 }
 
-void part2(char* input, int rows, int cols) {
+void part2(char *input, int rows, int cols) {
   int count = 0;
   for (int i = 1; i < rows - 1; i++) {
     for (int j = 1; j < cols - 1; j++) {
@@ -88,7 +87,8 @@ void part2(char* input, int rows, int cols) {
 }
 
 int main() {
-  int rows = 0; int cols = 0;
+  int rows = 0;
+  int cols = 0;
   char *input = read_input("04.input", &rows, &cols);
   part1(input, rows, cols);
   part2(input, rows, cols);
