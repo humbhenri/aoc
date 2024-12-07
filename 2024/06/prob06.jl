@@ -15,42 +15,30 @@ function getGuard(area)
     end
 end
 
-function walk(area, (x, y)::Tuple{Int, Int})
-    dirs = ["^", ">", "v", "<"]
-    next = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-    dir = area[x][y]
-    index = findfirst(==(dir), dirs)
-    dx, dy = next[index]
-    X, Y = x + dx, y + dy
-    if (area[X][Y] == "#")
-        nextdir = index + 1 <= 4 ? index + 1 : 1
-        area[x][y] = dirs[nextdir]
-        return x, y
-    end
-    area[X][Y] = dir
-    area[x][y] = "X"
-    X, Y
-end
-
 function count(area)
     mapreduce(x -> x == "X", +, Iterators.flatten(area)) + 1
 end
 
 function part1(area)
-    (x, y) = getGuard(area)
+    x, y = getGuard(area)
     while (true)
-        try
-            (x, y) = walk(area, (x, y))
-            str = join(area, "\n")
-        catch e
-            if isa(e, BoundsError)
-                distinct = count(area)
-                println("distinct positions: $distinct")
-                exit(0)
-            else
-                println(e)
-                exit(1)
-            end
+        dirs = ["^", ">", "v", "<"]
+        next = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+        dir = area[x][y]
+        index = findfirst(==(dir), dirs)
+        dx, dy = next[index]
+        X, Y = x + dx, y + dy
+        if (X == 0 || Y == 0 || X == length(area)+1 || Y == length(area[1])+1)
+            distinct = count(area)
+            println("distinct positions: $distinct")
+            break
+        elseif (area[X][Y] == "#")
+            nextdir = index + 1 <= 4 ? index + 1 : 1
+            area[x][y] = dirs[nextdir]
+        else
+            area[X][Y] = dir
+            area[x][y] = "X"
+            x, y = X, Y
         end
     end
 end
