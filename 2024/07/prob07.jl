@@ -20,11 +20,27 @@ function combinations(numbers)
     for equation in equations
         insert!(newEquations, 1, [first; "+"; equation])
         insert!(newEquations, 1, [first; "*"; equation])
+        insert!(newEquations, 1, [first; "||"; equation])
     end
     newEquations
 end
+
+function concatenate(equation)
+    res = []
+    for term in equation
+        if (length(res) > 0 && res[end] == "||")
+            pop!(res)
+            number = pop!(res)
+            push!(res, parse(Int, string(number, term)))
+        else
+            push!(res, term)
+        end
+    end
+    res
+end
             
 function eval(equation)
+    equation = concatenate(equation)
     ans=0
     op=""
     for el in equation
@@ -36,7 +52,7 @@ function eval(equation)
             else
                 if op == "+"
                     ans = ans + el
-                else
+                elseif op == "*"
                     ans = ans * el
                 end
             end
@@ -52,6 +68,7 @@ function part1(input)
         equations = combinations(line[2])
         for equation in equations
             if eval(equation) == target
+                println("target $target, equation $equation")
                 sum += target
                 break
             end
@@ -60,5 +77,5 @@ function part1(input)
     println("sum = $sum")
 end
 
-input = parseinput("07.input")
-part1(input)
+input = parseinput("example")
+@showtime part1(input)
