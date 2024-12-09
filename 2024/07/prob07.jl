@@ -79,3 +79,4 @@ end
 
 input = parseinput("example")
 @showtime part1(input)
+eval([6, "*", 8, "||", 6, "*", 15]) # should be 7290
