@@ -19,6 +19,9 @@ function count(area)
     mapreduce(x -> x == "X", +, Iterators.flatten(area)) + 1
 end
 
+visited::Dict{Tuple{Int,Int}, String} = Dict()
+
+# return true if a loop is detected
 function part1(area)
     x, y = getGuard(area)
     while (true)
@@ -38,10 +41,33 @@ function part1(area)
         else
             area[X][Y] = dir
             area[x][y] = "X"
+            if (get(visited, (x, y), "") == dir)
+                println("loop detected: $x $y $dir")
+                return true
+            end
+            visited[(x, y)] = dir
             x, y = X, Y
         end
     end
+    return false
 end
 
-area = parseinput("06.input")
-part1(area)
+function part2(filename)
+    # for every visited place in part 1, add a block in the area, if a loop is detect increment the count
+    count = 0
+    originalvis = copy(visited)
+    for (x, y) in keys(originalvis)
+        area = parseinput(filename)
+        area[x][y] = "#"
+        loop = part1(area)
+        if (loop)
+            count += 1
+        end
+    end
+    println("count = $count")
+end
+
+
+area = parseinput("example")
+@showtime part1(area)
+@showtime part2("example")
