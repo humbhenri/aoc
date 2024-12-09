@@ -13,17 +13,16 @@ function getGuard(area)
             end
         end
     end
+    throw(ArgumentError("Area without a guard: $area"))
 end
 
 function count(area)
     mapreduce(x -> x == "X", +, Iterators.flatten(area)) + 1
 end
 
-visited::Dict{Tuple{Int,Int}, String} = Dict()
-
 # return true if a loop is detected
-function part1(area)
-    x, y = getGuard(area)
+function part1(area, visited, guard)
+    x, y = guard
     while (true)
         dirs = ["^", ">", "v", "<"]
         next = [(-1, 0), (0, 1), (1, 0), (0, -1)]
@@ -42,7 +41,6 @@ function part1(area)
             area[X][Y] = dir
             area[x][y] = "X"
             if (get(visited, (x, y), "") == dir)
-                println("loop detected: $x $y $dir")
                 return true
             end
             visited[(x, y)] = dir
@@ -55,19 +53,27 @@ end
 function part2(filename)
     # for every visited place in part 1, add a block in the area, if a loop is detect increment the count
     count = 0
-    originalvis = copy(visited)
-    for (x, y) in keys(originalvis)
+    visited::Dict{Tuple{Int,Int}, String} = Dict()
+    area = parseinput(filename)
+    guard = getGuard(area)
+    part1(area, visited, guard)
+    for (x, y) in keys(visited)
         area = parseinput(filename)
+        dir = area[x][y]
+        # we cannot block the start position
+        if (dir in ["^", ">", "v", "<"])
+            continue
+        end
         area[x][y] = "#"
-        loop = part1(area)
+        loop = part1(area, Dict(), guard)
         if (loop)
             count += 1
         end
     end
-    println("count = $count")
+    println("part 2 = $count")
 end
 
 
 area = parseinput("example")
-@showtime part1(area)
-@showtime part2("example")
+@showtime part1(area, Dict(), getGuard(area))
+@showtime part2("06.input")
