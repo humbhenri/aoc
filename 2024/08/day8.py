@@ -34,11 +34,7 @@ def debug(antennas, nodes, maxrow, maxcol):
   print('\n'.join(output))
 
 
-with open('example2', 'r') as f:
-  content = f.read()
-  antennas, maxrow, maxcol = parse(content)
-  # print(antennas)
-  # print(antinodes((3, 4), (5, 5)))
+def all_antinodes(antennas, maxrow, maxcol):
   nodes = []
   antennas_places = list(chain.from_iterable([places for _, places in antennas.items()]))
   for antenna, places in antennas.items():
@@ -47,11 +43,20 @@ with open('example2', 'r') as f:
         place1, place2 = places[i], places[j]
         nodes += antinodes(place1, place2)
   nodes = [(x, y) for (x, y) in nodes
-           if 0 <= x <= maxrow and 0 <= y <= maxcol
-           and (x, y) not in antennas_places
-           ]
-  print(len(nodes))
-  debug(antennas, nodes, maxrow, maxcol)
+            if 0 <= x <= maxrow and 0 <= y <= maxcol
+            and (x, y) not in antennas_places]
+  return nodes
 
-# a=[1,2,3]
-# print(*product(a, a[1:]))
+
+if __name__ == "__main__":
+  with open('example2', 'r') as f:
+    content = f.read()
+    antennas, maxrow, maxcol = parse(content)
+    nodes = all_antinodes(antennas, maxrow, maxcol)
+    # print(antennas)
+    # print(antinodes((3, 4), (5, 5)))
+    print(len(nodes))
+    debug(antennas, nodes, maxrow, maxcol)
+
+  # a=[1,2,3]
+  # print(*product(a, a[1:]))
