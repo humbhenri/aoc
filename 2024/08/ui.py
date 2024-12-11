@@ -2,7 +2,7 @@
 
 import tkinter as tk
 from collections import defaultdict
-from day8 import parse, all_antinodes
+from day8 import parse, all_antinodes, count_antinodes
 
 antennas = defaultdict(list)
 antinodes = []
@@ -36,7 +36,7 @@ def update_grid():
            grid[r][c]['text'] = '#'
 
     text_widget.delete("1.0", tk.END)  # Clear all text in the widget
-    text_widget.insert("1.0", '# antinodes: ' + str(len(antinodes)))
+    text_widget.insert("1.0", '# antinodes: ' + str(count_antinodes(antinodes)))
 
 
 def edit_character(row, col):
@@ -47,7 +47,6 @@ def edit_character(row, col):
             old_char = grid[row][col]['text']
             grid[row][col]['text'] = new_char
             if new_char != old_char:
-                print(f"old_char = {old_char}, new_char = {new_char}, {antennas[old_char]}")
                 if old_char in antennas and (row, col) in antennas[old_char]:
                     antennas[old_char].remove((row, col))
                 if new_char not in ['.', '#']:

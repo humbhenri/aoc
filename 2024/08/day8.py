@@ -12,6 +12,7 @@ def parse(content):
         antennas[c].append((i, j))
   return antennas, maxrow, maxcol
 
+
 def antinodes(antenna1, antenna2):
   x1, y1 = antenna1
   x2, y2 = antenna2
@@ -23,6 +24,7 @@ def antinodes(antenna1, antenna2):
     (x1 - dx, y1 - dy),
     (x2 + dx, y2 + dy),
   ]
+
 
 def debug(antennas, nodes, maxrow, maxcol):
   output = ['.' * (maxcol+1) for _ in range(maxrow+1)]
@@ -42,14 +44,13 @@ def all_antinodes(antennas, maxrow, maxcol):
       for j in range(i + 1, len(places)):
         place1, place2 = places[i], places[j]
         for x, y in antinodes(place1, place2):
-          if 0 <= x <= maxrow and 0 <= y <= maxcol and (x, y) not in antennas_places:
+          if 0 <= x <= maxrow and 0 <= y <= maxcol:# and (x, y) not in antennas_places:
             nodes.append((x, y, place1, place2))
-
-  #       nodes += antinodes(place1, place2)
-  # nodes = [(x, y) for (x, y) in nodes
-  #           if 0 <= x <= maxrow and 0 <= y <= maxcol
-  #           and (x, y) not in antennas_places]
   return nodes
+
+
+def count_antinodes(antinodes):
+  return len(set([(x, y) for (x, y, *rest) in antinodes]))
 
 
 if __name__ == "__main__":
@@ -57,9 +58,4 @@ if __name__ == "__main__":
     content = f.read()
     antennas, maxrow, maxcol = parse(content)
     nodes = all_antinodes(antennas, maxrow, maxcol)
-    # print(antennas)
-    # print(antinodes((3, 4), (5, 5)))
-    print(len(set([(x, y) for (x, y, *rest) in nodes])))
-
-  # a=[1,2,3]
-  # print(*product(a, a[1:]))
+    print(f"antinodes count = {count_antinodes(nodes)}")
