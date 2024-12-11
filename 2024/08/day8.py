@@ -53,14 +53,13 @@ def all_antinodes(antennas, maxrow, maxcol):
 
 
 if __name__ == "__main__":
-  with open('example2', 'r') as f:
+  with open('08.input', 'r') as f:
     content = f.read()
     antennas, maxrow, maxcol = parse(content)
     nodes = all_antinodes(antennas, maxrow, maxcol)
     # print(antennas)
     # print(antinodes((3, 4), (5, 5)))
-    print(len(nodes))
-    debug(antennas, nodes, maxrow, maxcol)
+    print(len(set([(x, y) for (x, y, *rest) in nodes])))
 
   # a=[1,2,3]
   # print(*product(a, a[1:]))

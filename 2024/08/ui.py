@@ -21,17 +21,22 @@ def center_window(window):
 
 
 def update_grid():
-    global grid, antennas, rows, cols, antinodes
+    global grid, antennas, rows, cols, antinodes, text_widget
+
     # erase current antinodes
     for x, y, *rest in antinodes:
         grid[x][y]['text'] = '.'
     antinodes = all_antinodes(antennas, rows-1, cols-1)
+
     for antenna, places in antennas.items():
         for r,c in places:
             grid[r][c]['text'] = antenna
     for (r,c,*rest) in antinodes:
        if grid[r][c]['text'] == '.':
            grid[r][c]['text'] = '#'
+
+    text_widget.delete("1.0", tk.END)  # Clear all text in the widget
+    text_widget.insert("1.0", '# antinodes: ' + str(len(antinodes)))
 
 
 def edit_character(row, col):
@@ -105,6 +110,9 @@ if __name__=='__main__':
             row.append(button)
         grid.append(row)
 
+    text_widget = tk.Text(root, height=1, width=40)
+    text_widget.insert("1.0", "# antinodes: ")
+    text_widget.grid(row=rows, column=0, columnspan=cols, padx=5, pady=10)
+
     center_window(root)
-    # Start the main event loop
     root.mainloop()
