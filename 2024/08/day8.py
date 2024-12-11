@@ -41,10 +41,14 @@ def all_antinodes(antennas, maxrow, maxcol):
     for i in range(len(places)):
       for j in range(i + 1, len(places)):
         place1, place2 = places[i], places[j]
-        nodes += antinodes(place1, place2)
-  nodes = [(x, y) for (x, y) in nodes
-            if 0 <= x <= maxrow and 0 <= y <= maxcol
-            and (x, y) not in antennas_places]
+        for x, y in antinodes(place1, place2):
+          if 0 <= x <= maxrow and 0 <= y <= maxcol and (x, y) not in antennas_places:
+            nodes.append((x, y, place1, place2))
+
+  #       nodes += antinodes(place1, place2)
+  # nodes = [(x, y) for (x, y) in nodes
+  #           if 0 <= x <= maxrow and 0 <= y <= maxcol
+  #           and (x, y) not in antennas_places]
   return nodes
 
 
