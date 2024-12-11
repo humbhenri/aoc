@@ -9,6 +9,17 @@ antinodes = []
 rows, cols = 20, 10
 grid = []
 
+def center_window(window):
+    window.update_idletasks()  # Ensure accurate geometry calculations
+    width = window.winfo_width()
+    height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    window.geometry(f"{width}x{height}+{x}+{y}")
+
+
 def update_grid():
     global grid, antennas, rows, cols, antinodes
     # erase current antinodes
@@ -48,6 +59,9 @@ def edit_character(row, col):
     entry.pack(pady=5)
     entry.focus_set()
     tk.Button(editor, text="OK", command=update_character).pack(pady=5)
+    editor.update_idletasks()
+    editor.geometry("300x150")  # Set an initial size
+    center_window(editor)
 
 
 def find_antenna(pos):
@@ -91,5 +105,6 @@ if __name__=='__main__':
             row.append(button)
         grid.append(row)
 
+    center_window(root)
     # Start the main event loop
     root.mainloop()
