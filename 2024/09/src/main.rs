@@ -1,7 +1,6 @@
 use std::fs::File;
 use std::path::Path;
 use std::io::{self, Read};
-use num_bigint::{ToBigUint, BigUint};
 
 fn decompress(s: &str) -> Vec<String> {
     let mut res = Vec::new();
@@ -10,7 +9,6 @@ fn decompress(s: &str) -> Vec<String> {
     for c in s.chars() {
         let n : usize = c.to_digit(10).unwrap().try_into().unwrap();
         let digit = if space { '.'.to_string() } else { i.to_string() };
-        // res.push(digit.to_string().repeat(n));
         for _ in 0..n {
             res.push(digit.to_string());
         }
@@ -41,19 +39,17 @@ fn move_blocks(s: &mut Vec<String>) {
         if first_space > last_block {
             break;
         }
-        // let bytes = unsafe { s.as_bytes_mut() };
-        // bytes.swap(first_space, last_block);
         s.swap(first_space, last_block);
     }
 }
 
-fn checksum(s: &Vec<String>) -> BigUint {
-    let mut sum = BigUint::ZERO;
+fn checksum(s: &Vec<String>) -> u128 {
+    let mut sum = 0;
     for (i, c) in s.iter().enumerate() {
         if c == "." {
             continue;
         }
-        sum += i * (c.to_string().parse::<u32>().expect(&String::from("should be a number ".to_string() + c))).to_biguint().unwrap();
+        sum += i as u128 * (c.to_string().parse::<u128>().expect(&String::from("should be a number ".to_string() + c)));
     }
     sum
 }
@@ -116,6 +112,6 @@ mod test {
 
     #[test]
     fn test_checksum() {
-        assert_eq!(checksum(&split_to_vec_string("0099811188827773336446555566..............")), 1928.to_biguint().unwrap());
+        assert_eq!(checksum(&split_to_vec_string("0099811188827773336446555566..............")), 1928);
     }
 }
