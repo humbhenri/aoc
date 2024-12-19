@@ -1,14 +1,18 @@
 use std::fs::File;
-use std::path::Path;
 use std::io::{self, Read};
+use std::path::Path;
 
 fn decompress(s: &str) -> Vec<String> {
     let mut res = Vec::new();
     let mut i = 0;
     let mut space = false;
     for c in s.chars() {
-        let n : usize = c.to_digit(10).unwrap().try_into().unwrap();
-        let digit = if space { '.'.to_string() } else { i.to_string() };
+        let n: usize = c.to_digit(10).unwrap().try_into().unwrap();
+        let digit = if space {
+            '.'.to_string()
+        } else {
+            i.to_string()
+        };
         for _ in 0..n {
             res.push(digit.to_string());
         }
@@ -20,7 +24,7 @@ fn decompress(s: &str) -> Vec<String> {
     res
 }
 
-fn move_blocks(s: &mut Vec<String>) {
+fn move_blocks(s: &mut [String]) {
     loop {
         // get last block after spaces
         // if there's one, swap with first space found
@@ -43,13 +47,13 @@ fn move_blocks(s: &mut Vec<String>) {
     }
 }
 
-fn checksum(s: &Vec<String>) -> u128 {
+fn checksum(s: &[String]) -> u128 {
     let mut sum = 0;
     for (i, c) in s.iter().enumerate() {
         if c == "." {
             continue;
         }
-        sum += i as u128 * (c.to_string().parse::<u128>().expect(&String::from("should be a number ".to_string() + c)));
+        sum += i as u128 * (c.to_string().parse::<u128>().unwrap());
     }
     sum
 }
@@ -58,7 +62,7 @@ fn read_input() -> io::Result<String> {
     let mut s = String::new();
     // let path = Path::new("09.example");
     let path = Path::new("09.input");
-    let mut file = File::open(&path)?;
+    let mut file = File::open(path)?;
     file.read_to_string(&mut s)?;
     Ok(s.trim().to_string())
 }
@@ -90,8 +94,14 @@ mod test {
     #[test]
     fn test_decompress() {
         assert_eq!(decompress("12345").join(""), "0..111....22222");
-        assert_eq!(decompress("2333133121414131402").join(""), "00...111...2...333.44.5555.6666.777.888899");
-        assert_eq!(decompress("233313312141413140212").join(""), "00...111...2...333.44.5555.6666.777.888899.1010");
+        assert_eq!(
+            decompress("2333133121414131402").join(""),
+            "00...111...2...333.44.5555.6666.777.888899"
+        );
+        assert_eq!(
+            decompress("233313312141413140212").join(""),
+            "00...111...2...333.44.5555.6666.777.888899.1010"
+        );
     }
 
     #[test]
@@ -102,16 +112,27 @@ mod test {
 
         let mut input2 = split_to_vec_string("00...111...2...333.44.5555.6666.777.888899");
         move_blocks(&mut input2);
-        assert_eq!(input2.join(""), "0099811188827773336446555566..............");
+        assert_eq!(
+            input2.join(""),
+            "0099811188827773336446555566.............."
+        );
 
-        let mut input3 = "0 0 . . . 1 1 1 . . . 2 . . . 3 3 3 . 4 4 . 5 5 5 5 . 6 6 6 6 . 7 7 7 . 8 8 8 8 9 9 10"
+        let mut input3: Vec<String> = "0 0 . . . 1 1 1 . . . 2 . . . 3 3 3 . 4 4 . 5 5 5 5 . 6 6 6 6 . 7 7 7 . 8 8 8 8 9 9 10"
             .split_whitespace().map(|s| s.to_string()).collect();
         move_blocks(&mut input3);
-        assert_eq!(input3.join(""), "001099111888287733374465555666..............");
+        assert_eq!(
+            input3.join(""),
+            "001099111888287733374465555666.............."
+        );
     }
 
     #[test]
     fn test_checksum() {
-        assert_eq!(checksum(&split_to_vec_string("0099811188827773336446555566..............")), 1928);
+        assert_eq!(
+            checksum(&split_to_vec_string(
+                "0099811188827773336446555566.............."
+            )),
+            1928
+        );
     }
 }
